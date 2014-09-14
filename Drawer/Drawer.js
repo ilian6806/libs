@@ -1,337 +1,337 @@
 var Drawer = (function() {
 
-	var 
-		CONTROLS_HEIGHT = 50, 
-		DEFAULT_THICKNESS = 10,
-		DEFAULT_COLOR = '#000',
-		isDrawing = false,// indicates if it is drawing now.
-		startX = 0, // the starting point of next line drawing.
-		startY = 0,
-		resetButton,
-		currentSizeNum,
-		currentSize,
-		currentColor,
-		colorCanvas,
-		colorCtx,
-		settings,
-		palette,
-		sizeInput,
-		$controls,
-		controls,
-		$canvas,
-		canvas,
-		colors,
-		table,
-		row,
-		str,
-		ids,
-		ctx;
+    var 
+        CONTROLS_HEIGHT = 50, 
+        DEFAULT_THICKNESS = 10,
+        DEFAULT_COLOR = '#000',
+        isDrawing = false,// indicates if it is drawing now.
+        startX = 0, // the starting point of next line drawing.
+        startY = 0,
+        resetButton,
+        currentSizeNum,
+        currentSize,
+        currentColor,
+        colorCanvas,
+        colorCtx,
+        settings,
+        palette,
+        sizeInput,
+        $controls,
+        controls,
+        $canvas,
+        canvas,
+        colors,
+        table,
+        row,
+        str,
+        ids,
+        ctx;
 
-	settings = {
-		thickness: DEFAULT_THICKNESS,
-		color: DEFAULT_COLOR
-	};
+    settings = {
+        thickness: DEFAULT_THICKNESS,
+        color: DEFAULT_COLOR
+    };
 
-	ids = {
-		sizeInput: 'drawer-size-input',
-		currentColor: 'drawer-current-color',
-		currentSizeNum: 'drawer-current-size',
-		colorPickerCanvas: 'drawer-color-picker-canvas',
-		sizeInput: 'drawer-size-input',
-		resetButton: 'drawer-reset-button',
-		controlBar: 'drawer-controls-bar'
-	};
+    ids = {
+        sizeInput: 'drawer-size-input',
+        currentColor: 'drawer-current-color',
+        currentSizeNum: 'drawer-current-size',
+        colorPickerCanvas: 'drawer-color-picker-canvas',
+        sizeInput: 'drawer-size-input',
+        resetButton: 'drawer-reset-button',
+        controlBar: 'drawer-controls-bar'
+    };
 
-	str = {
-		reset: 'Reset',
-		color: 'Color: ',
-		size: 'Size: '
-	};
+    str = {
+        reset: 'Reset',
+        color: 'Color: ',
+        size: 'Size: '
+    };
 
-	/**************************************************
-	** HELPERS
-	**************************************************/
-	function logError(msg) {
-		console.error('Drawer: ' + msg);
-	}
+    /**************************************************
+    ** HELPERS
+    **************************************************/
+    function logError(msg) {
+        console.error('Drawer: ' + msg);
+    }
 
-	function getCursorPosition(event, canvasElement) {
-		return { 
-			x: event.pageX - canvasElement.offsetLeft,
-			y: event.pageY - canvasElement.offsetTop 
-		};
-	}
+    function getCursorPosition(event, canvasElement) {
+        return { 
+            x: event.pageX - canvasElement.offsetLeft,
+            y: event.pageY - canvasElement.offsetTop 
+        };
+    }
 
-	function rgbToHex(r, g, b){
-    	if (r > 255 || g > 255 || b > 255) logError('Invalid color component');
-    	return ((r << 16) | (g << 8) | b).toString(16);
+    function rgbToHex(r, g, b){
+        if (r > 255 || g > 255 || b > 255) logError('Invalid color component');
+        return ((r << 16) | (g << 8) | b).toString(16);
     }
 
     // check for jQuery loaded
-	if (typeof $ == 'undefined') {
-		logError('Drawer requires jQuery loaded.');
-	}
+    if (typeof $ == 'undefined') {
+        logError('Drawer requires jQuery loaded.');
+    }
 
-	/**************************************************
-	** SETTERS
-	**************************************************/
-	function setColor(newColor) {
+    /**************************************************
+    ** SETTERS
+    **************************************************/
+    function setColor(newColor) {
 
-		if (typeof newColor != 'string') {
-			logError('Color must by set as string.');
-			return;
-		}
+        if (typeof newColor != 'string') {
+            logError('Color must by set as string.');
+            return;
+        }
 
-		settings.color = newColor;
+        settings.color = newColor;
 
-		$(function() {
-			currentColor = document.getElementById(ids.currentColor);
-			if (currentColor) currentColor.style.backgroundColor = newColor;
-		});
+        $(function() {
+            currentColor = document.getElementById(ids.currentColor);
+            if (currentColor) currentColor.style.backgroundColor = newColor;
+        });
 
-		return this;
-	}
+        return this;
+    }
 
-	function setSize(newSize) {
+    function setSize(newSize) {
 
-		if (typeof newSize != 'number') {
-			logError('Size must by set as number.');
-			return;
-		}
+        if (typeof newSize != 'number') {
+            logError('Size must by set as number.');
+            return;
+        }
 
-		settings.thickness = newSize;
+        settings.thickness = newSize;
 
-		$(function() {
-			currentSize = document.getElementById(ids.sizeInput);
-			currentSizeNum = document.getElementById(ids.currentSizeNum);
+        $(function() {
+            currentSize = document.getElementById(ids.sizeInput);
+            currentSizeNum = document.getElementById(ids.currentSizeNum);
 
-			if (currentSize && currentSizeNum) {
-				currentSizeNum.innerHTML = newSize;
-				currentSize.value = newSize;
-				$(currentSize).trigger('input');
-			}
-		});
+            if (currentSize && currentSizeNum) {
+                currentSizeNum.innerHTML = newSize;
+                currentSize.value = newSize;
+                $(currentSize).trigger('input');
+            }
+        });
 
-		return this;
-	}
+        return this;
+    }
 
-	/**************************************************
-	** RENDERING METHODS
-	**************************************************/
+    /**************************************************
+    ** RENDERING METHODS
+    **************************************************/
     function setControlsBarTemplate() {
 
-    	row.childNodes[0].style.width = '40%';
-		row.childNodes[1].style.width = '8%';
-		row.childNodes[2].style.width = '8%';
-		row.childNodes[3].style.width = '8%';
-		row.childNodes[4].style.width = '3%';
-		row.childNodes[5].style.width = '24%';
-		row.childNodes[6].style.width = '9%';
+        row.childNodes[0].style.width = '40%';
+        row.childNodes[1].style.width = '8%';
+        row.childNodes[2].style.width = '8%';
+        row.childNodes[3].style.width = '8%';
+        row.childNodes[4].style.width = '3%';
+        row.childNodes[5].style.width = '24%';
+        row.childNodes[6].style.width = '9%';
 
-		row.childNodes[1].innerHTML = str.color;
-		row.childNodes[3].innerHTML = str.size;
+        row.childNodes[1].innerHTML = str.color;
+        row.childNodes[3].innerHTML = str.size;
 
-		row.childNodes[2].style.backgroundColor = DEFAULT_COLOR;
-		row.childNodes[2].style.borderRadius = '50%';
+        row.childNodes[2].style.backgroundColor = DEFAULT_COLOR;
+        row.childNodes[2].style.borderRadius = '50%';
     }
 
     function loadColorPicker() {
 
-    	colorCanvas = document.createElement('canvas');
-		colorCtx = colorCanvas.getContext('2d');
-		colorCanvas.id = ids.colorPickerCanvas;
-		colorCanvas.width = 300;
-		colorCanvas.height = CONTROLS_HEIGHT - 8;
+        colorCanvas = document.createElement('canvas');
+        colorCtx = colorCanvas.getContext('2d');
+        colorCanvas.id = ids.colorPickerCanvas;
+        colorCanvas.width = 300;
+        colorCanvas.height = CONTROLS_HEIGHT - 8;
 
-		row.childNodes[2].id = ids.currentColor;
-		row.childNodes[0].appendChild(colorCanvas);
+        row.childNodes[2].id = ids.currentColor;
+        row.childNodes[0].appendChild(colorCanvas);
 
-		palette = new Image();
+        palette = new Image();
 
-		palette.onload = function() {
-			colorCtx.drawImage(palette, 0, 0, 300, CONTROLS_HEIGHT);
-		};
-		palette.crossOrigin = 'anonymous'; // security issues 
-		palette.src = 'https://lh5.googleusercontent.com/-tLrMu9cdcpY/UVS2E1JjRpI/AAAAAAAABR8/PoVUb56Coxs/s420/spectrum.png';
+        palette.onload = function() {
+            colorCtx.drawImage(palette, 0, 0, 300, CONTROLS_HEIGHT);
+        };
+        palette.crossOrigin = 'anonymous'; // security issues 
+        palette.src = 'https://lh5.googleusercontent.com/-tLrMu9cdcpY/UVS2E1JjRpI/AAAAAAAABR8/PoVUb56Coxs/s420/spectrum.png';
 
-		colorCanvas.onclick = function(e) {
-			var pos = getCursorPosition(e, colorCanvas);
-			var imageData = colorCtx.getImageData(pos.x, pos.y, 1, 1).data;
-			var rgbColor = '#' + ('000000' + rgbToHex(imageData[0], imageData[1], imageData[2])).slice(-6);
-			row.childNodes[2].style.backgroundColor = settings.color = rgbColor;
-		};
+        colorCanvas.onclick = function(e) {
+            var pos = getCursorPosition(e, colorCanvas);
+            var imageData = colorCtx.getImageData(pos.x, pos.y, 1, 1).data;
+            var rgbColor = '#' + ('000000' + rgbToHex(imageData[0], imageData[1], imageData[2])).slice(-6);
+            row.childNodes[2].style.backgroundColor = settings.color = rgbColor;
+        };
     }
 
     function loadSizeInput() {
 
-    	sizeInput = document.createElement('input');
-		sizeInput.type = 'range';
-		sizeInput.id = ids.sizeInput;
-		sizeInput.min = 1;
-		sizeInput.max = 100;
-		sizeInput.value = row.childNodes[4].innerHTML = settings.thickness = DEFAULT_THICKNESS;
-		sizeInput.oninput = function() {
-			row.childNodes[4].innerHTML = settings.thickness = this.value;
-		};
-		row.childNodes[4].id = ids.currentSize;
-		row.childNodes[5].appendChild(sizeInput);
+        sizeInput = document.createElement('input');
+        sizeInput.type = 'range';
+        sizeInput.id = ids.sizeInput;
+        sizeInput.min = 1;
+        sizeInput.max = 100;
+        sizeInput.value = row.childNodes[4].innerHTML = settings.thickness = DEFAULT_THICKNESS;
+        sizeInput.oninput = function() {
+            row.childNodes[4].innerHTML = settings.thickness = this.value;
+        };
+        row.childNodes[4].id = ids.currentSize;
+        row.childNodes[5].appendChild(sizeInput);
     }
 
     function loadResetButton() {
-    	resetButton = document.createElement('button');
-    	resetButton.id = ids.resetButton;
-    	resetButton.innerHTML = str.reset;
-    	resetButton.onclick = function() {
-    		clear();
-    		socket.emit('clear');
-    	};
+        resetButton = document.createElement('button');
+        resetButton.id = ids.resetButton;
+        resetButton.innerHTML = str.reset;
+        resetButton.onclick = function() {
+            clear();
+            socket.emit('clear');
+        };
 
-    	row.childNodes[6].appendChild(resetButton);
+        row.childNodes[6].appendChild(resetButton);
     }
 
-	function loadControls() {
+    function loadControls() {
 
-		if (!canvas) {
-			logError('Can\'t find canvas element.');
-			return;
-		}
+        if (!canvas) {
+            logError('Can\'t find canvas element.');
+            return;
+        }
 
-		if (controls) {
-			logError('Controls bar already shown.');
-			return;
-		}
+        if (controls) {
+            logError('Controls bar already shown.');
+            return;
+        }
 
-		controls = document.createElement('div');
-		controls.id = ids.controlBar;
-		controls.style.border = '1px solid blue';
-		$controls = $(controls);
-		$canvas.before($controls);
-		$controls.width($canvas.width());
-		$controls.height(CONTROLS_HEIGHT);
-		console.log($canvas.height());
-		$canvas.attr('height', $canvas.height() - CONTROLS_HEIGHT);
+        controls = document.createElement('div');
+        controls.id = ids.controlBar;
+        controls.style.border = '1px solid blue';
+        $controls = $(controls);
+        $canvas.before($controls);
+        $controls.width($canvas.width());
+        $controls.height(CONTROLS_HEIGHT);
+        console.log($canvas.height());
+        $canvas.attr('height', $canvas.height() - CONTROLS_HEIGHT);
 
-		table = document.createElement('table');
-		row = document.createElement('tr');
+        table = document.createElement('table');
+        row = document.createElement('tr');
 
-		table.style.width = '100%';
-		table.style.height = '100%';
+        table.style.width = '100%';
+        table.style.height = '100%';
 
-		for (var i = 0; i < 7; i++) {
-			var td = document.createElement('td');
-			td.style.textAlign = 'center';
-			row.appendChild(td);
-		}
+        for (var i = 0; i < 7; i++) {
+            var td = document.createElement('td');
+            td.style.textAlign = 'center';
+            row.appendChild(td);
+        }
 
-		setControlsBarTemplate();
-		loadResetButton();
-		loadSizeInput();
-		loadColorPicker();
+        setControlsBarTemplate();
+        loadResetButton();
+        loadSizeInput();
+        loadColorPicker();
 
-		table.appendChild(row);
-		controls.appendChild(table);
+        table.appendChild(row);
+        controls.appendChild(table);
 
-		return this;
-	}
+        return this;
+    }
 
-	function createCanvas(id, hasControlsBar) {
+    function createCanvas(id, hasControlsBar) {
 
-		$(function() {
-			canvas = document.getElementById(id);
-			canvas.style.position = 'relative';
-			ctx = canvas.getContext('2d');
-			$canvas = $(canvas);
-			bindCanvasEvents();
+        $(function() {
+            canvas = document.getElementById(id);
+            canvas.style.position = 'relative';
+            ctx = canvas.getContext('2d');
+            $canvas = $(canvas);
+            bindCanvasEvents();
 
-			if (hasControlsBar) {
-				loadControls();
-			}
-		});
+            if (hasControlsBar) {
+                loadControls();
+            }
+        });
 
-		return this;
-	}
+        return this;
+    }
 
-	function drawLine(params) {
-		ctx.beginPath();
-		ctx.moveTo(params.x1, params.y1);
-		ctx.lineTo(params.x2, params.y2);
-		ctx.lineWidth = params.size;
-		ctx.strokeStyle = params.color;
-		ctx.lineCap = 'round';
-		ctx.stroke();
-	}
+    function drawLine(params) {
+        ctx.beginPath();
+        ctx.moveTo(params.x1, params.y1);
+        ctx.lineTo(params.x2, params.y2);
+        ctx.lineWidth = params.size;
+        ctx.strokeStyle = params.color;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+    }
 
-	function sendServerData(params) {
-		//socket.emit('drawing data', params);
-	}
-	
-	function clear() {
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-	}
+    function sendServerData(params) {
+        //socket.emit('drawing data', params);
+    }
+    
+    function clear() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
 
-	function bindCanvasEvents() {
-		// the logic of drawing on canvas
-		$canvas.mousedown(function(e) {
-			// get the mouse x and y relative to the canvas top-left point.
-			var pos = getCursorPosition(e, canvas);
-			var mouseX = pos.x || 0;
-			var mouseY = pos.y || 0;
-			startX = mouseX;
-			startY = mouseY;
+    function bindCanvasEvents() {
+        // the logic of drawing on canvas
+        $canvas.mousedown(function(e) {
+            // get the mouse x and y relative to the canvas top-left point.
+            var pos = getCursorPosition(e, canvas);
+            var mouseX = pos.x || 0;
+            var mouseY = pos.y || 0;
+            startX = mouseX;
+            startY = mouseY;
 
-			var params = {
-				x1: startX + 1,
-				y1: startY + 1,
-				x2: mouseX,
-				y2: mouseY,
-				color: settings.color,
-				size: settings.thickness
-			};
+            var params = {
+                x1: startX + 1,
+                y1: startY + 1,
+                x2: mouseX,
+                y2: mouseY,
+                color: settings.color,
+                size: settings.thickness
+            };
 
-			drawLine(params);
-			//sendServerData(params);
-			isDrawing = true;
-		});
+            drawLine(params);
+            //sendServerData(params);
+            isDrawing = true;
+        });
 
-		$canvas.mousemove(function(e) {
-			// draw lines when is drawing
-			if (isDrawing) {
-				// get the mouse x and y relative to the canvas top-left point.
-				var pos = getCursorPosition(e, canvas);
-				var mouseX = pos.x || 0;
-				var mouseY = pos.y || 0;
+        $canvas.mousemove(function(e) {
+            // draw lines when is drawing
+            if (isDrawing) {
+                // get the mouse x and y relative to the canvas top-left point.
+                var pos = getCursorPosition(e, canvas);
+                var mouseX = pos.x || 0;
+                var mouseY = pos.y || 0;
 
-				if (!(mouseX == startX && mouseY == startY)) {
+                if (!(mouseX == startX && mouseY == startY)) {
 
-					var params = {
-						x1: startX + 1,
-						y1: startY + 1,
-						x2: mouseX,
-						y2: mouseY,
-						color: settings.color,
-						size: settings.thickness
-					};
+                    var params = {
+                        x1: startX + 1,
+                        y1: startY + 1,
+                        x2: mouseX,
+                        y2: mouseY,
+                        color: settings.color,
+                        size: settings.thickness
+                    };
 
-					drawLine(params);
-					//sendServerData(params);
+                    drawLine(params);
+                    //sendServerData(params);
 
-					startX = mouseX;
-					startY = mouseY;
-				}
-			}
-		});
+                    startX = mouseX;
+                    startY = mouseY;
+                }
+            }
+        });
 
-		$canvas.mouseup(function(e) {
-			isDrawing = false;
-		});
-	}
+        $canvas.mouseup(function(e) {
+            isDrawing = false;
+        });
+    }
 
-	return {
-		createCanvas: createCanvas,
-		loadControls: loadControls,
-		drawLine: drawLine,
-		setColor: setColor,
-		setSize: setSize,
-		clear: clear
-	};
+    return {
+        createCanvas: createCanvas,
+        loadControls: loadControls,
+        drawLine: drawLine,
+        setColor: setColor,
+        setSize: setSize,
+        clear: clear
+    };
 }());
