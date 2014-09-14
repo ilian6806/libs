@@ -1,0 +1,35 @@
+<html>
+<head>
+	<title>Draggable</title>
+	<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+ 	<script src="http://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+ 	<script src="Draggable.js" type="text/javascript"></script>
+	<style type="text/css">
+		html, body {
+			padding: 0;
+			margin: 0;
+		}
+		#container {
+			width: 70%;
+			height: 70%;
+			margin: auto;
+			border: 1px solid black;
+			border-radius: 30px;
+			margin: 20px auto;
+		}
+		#content {
+			width: 900px;
+		}
+	</style>
+</head>
+<body>
+	<div id="container">
+		<img id="content" src="map.jpg">
+	</div>
+	
+	<script type="text/javascript">
+		var Dragger = new Draggable();
+		Dragger.init('container', 'content');
+	</script>
+</body>
+</html>
