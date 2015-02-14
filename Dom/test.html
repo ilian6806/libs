@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>DOM</title>
+        <meta charset="utf-8">
+        <script src="logger.js"></script>
+        <script src="dom.js"></script>
+    </head>
+    <body>
+        <h1 id="header" class="header">Header</h1>
+        <ul class="list" id="my-list">
+            <li id="item1" class="item">lorem</li>
+            <li id="item2" class="item">ipsum</li>
+            <li id="item3" class="item">dolor</li>
+            <li id="item4" class="item">sit</li>
+            <li id="item5" class="item">amet</li>
+        </ul>
+    </body>
+    <script>
+        get.body().append(create('div', {
+            id: 'divv',
+            className: 'last'
+        }).addStyle({
+            border: '1px solid blue',
+            backgroundColor: 'yellow',
+            height: '20px'
+        }));
+
+        get.id('my-list')
+            .prepend(create('li', {
+                innerHTML: 'NEW'
+            }))
+            .append(create('li', {
+                innerHTML: 'NEW2'
+            }))
+
+        get.class('item')
+            .addStyle({
+                border: '1px solid blue',
+            })
+            .addStyle({
+                backgroundColor: 'yellow',
+                height: '20px'
+            })
+            .prepend(create('a', {
+                href: '#',
+                innerHTML: '123'
+            }))
+            .append([1,3])
+    </script>
+</html>
