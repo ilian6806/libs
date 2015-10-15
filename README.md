@@ -7,4 +7,4 @@ Simple implementation of the most used jQuery methods
 Simple implementation of the jQuery UI draggable functionality
 
 ##Drawer
-Drag & Draw + palette and brush size
+Canvas drag & draw + palette and brush size
