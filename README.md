@@ -1,10 +1,10 @@
-#Simple js libs
+# Simple js libs
 
-##Dom
+## Dom
 Simple implementation of the most used jQuery methods
 
-##Draggable
+## Draggable
 Simple implementation of the jQuery UI draggable functionality
 
-##Drawer
+## Drawer
 Canvas drag & draw + palette and brush size
