@@ -193,12 +193,12 @@ var Drawer = (function() {
 
         if (!canvas) {
             logError('Can\'t find canvas element.');
-            return;
+            return this;
         }
 
         if (controls) {
             logError('Controls bar already shown.');
-            return;
+            return this;
         }
 
         controls = document.createElement('div');
